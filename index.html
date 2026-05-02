@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Código QR Accesible</title>
+    <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+    <main class="container">
+        <section class="formulario" aria-labelledby="titulo-formulario">
+            <h1 id="titulo-formulario">Añade contenido al código QR - texto o URL</h1>
+            
+            <div class="campo">
+                <label for="nombre">Nombre del Código QR</label>
+                <input type="text" id="nombre" placeholder="Ejemplo: Mi emprendimiento" required aria-required="true">
+            </div>
+            
+            <div class="campo">
+                <label for="texto">Texto Simple o URL</label>
+                <input type="text" id="texto" placeholder="Ejemplo: https://mipagina.com" required aria-required="true">
+            </div>
+            
+            <fieldset class="campo fieldset-colores">
+                <legend>Color del Código QR</legend>
+                
+                <!-- Mecanismo visible y audible para baja visión y lectores de pantalla -->
+                <p id="color-anuncio" aria-live="polite" class="color-seleccionado-texto">
+                    Color seleccionado: <strong>Negro</strong>
+                </p>
+
+                <div class="colores" role="radiogroup" aria-labelledby="color-anuncio">
+                    <!-- Cada input ahora tiene aria-label, title y data-nombre-color -->
+                    <label class="color-option" style="background-color: #000000;" title="Negro">
+                        <input type="radio" name="color" value="#000000" class="sr-only-input" aria-label="Negro" data-nombre-color="Negro" checked>
+                    </label>
+                    <label class="color-option" style="background-color: #007bff;" title="Azul claro">
+                         <input type="radio" name="color" value="#007bff" class="sr-only-input" aria-label="Azul claro" data-nombre-color="Azul claro">
+                    </label>
+                    <label class="color-option" style="background-color: #ff5722;" title="Naranja">
+                        <input type="radio" name="color" value="#ff5722" class="sr-only-input" aria-label="Naranja" data-nombre-color="Naranja">
+                    </label>
+                    <label class="color-option" style="background-color: #4caf50;" title="Verde">
+                        <input type="radio" name="color" value="#4caf50" class="sr-only-input" aria-label="Verde" data-nombre-color="Verde">
+                    </label>
+                    <label class="color-option" style="background-color: #9c27b0;" title="Púrpura">
+                        <input type="radio" name="color" value="#9c27b0" class="sr-only-input" aria-label="Púrpura" data-nombre-color="Púrpura">
+                    </label>
+                </div>
+            </fieldset>
+            
+            <button class="btn" id="btn-generar" disabled aria-disabled="true">Generar Código QR</button>
+            <button class="btn btn-outline" id="btn-descargar" disabled aria-disabled="true">Descargar QR</button>
+            <button class="btn btn-outline" id="btn-reiniciar">Crear Otro</button>
+        </section>
+        
+        <section class="preview" aria-label="Vista previa del código QR">
+            <!-- Simulador de Teléfono restaurado -->
+            <div class="phone-frame">
+                <div class="qr-container" aria-live="polite" id="qr-live-region">
+                    <canvas id="qrcode" role="img" aria-label="Código QR en blanco"></canvas>
+                    <p id="mensaje-estado">Escanéame</p>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
