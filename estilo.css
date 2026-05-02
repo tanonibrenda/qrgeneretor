@@ -10,25 +10,22 @@ body {
     min-height: 100vh;
 }
 
-/* Ocultamiento accesible */
+/* Ocultamiento accesible - Mantiene el texto disponible para lectores de pantalla sin alterar el diseño visual */
 .sr-only {
     position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
     overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
-}
-.sr-only-input {
-    opacity: 0; position: absolute; width: 100%; height: 100%; cursor: pointer; margin: 0;
 }
 
 .container {
     display: flex;
     flex-direction: row;
-    background-color: #ffffff; /* Fondo blanco como en tu imagen */
+    background-color: #ffffff;
     padding: 2.5rem;
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     max-width: 900px;
     width: 100%;
-    gap: 3rem; /* Espacio entre formulario y teléfono */
+    gap: 3rem;
 }
 
 .formulario { flex: 1; }
@@ -44,29 +41,51 @@ body {
     width: 100%; padding: 0.8rem; font-size: 1rem; border: 1px solid #7ea2d6; border-radius: 8px; color: #333;
 }
 
-/* Foco visible indispensable */
-.campo input[type="text"]:focus-visible, .btn:focus-visible, .color-option:focus-within {
-    outline: 3px solid #000; outline-offset: 2px;
+/* Foco visible indispensable para inputs de texto y botones */
+.campo input[type="text"]:focus-visible, .btn:focus-visible {
+    outline: 3px solid #000; 
+    outline-offset: 2px;
 }
 
 .colores { display: flex; gap: 12px; margin-top: 0.5rem; }
 
+/* Configuración de las opciones de color */
 .color-option {
-    position: relative; width: 35px; height: 35px; border-radius: 50%;
-    cursor: pointer; border: 2px solid #fff; box-shadow: 0 0 0 1px #ccc; transition: transform 0.2s ease;
+    position: relative; 
+    width: 35px; 
+    height: 35px; 
+    border-radius: 50%;
+    cursor: pointer; 
+    border: 2px solid #fff; 
+    box-shadow: 0 0 0 1px #ccc; 
+    transition: transform 0.2s ease;
+    display: inline-block; /* Indispensable ahora que el input está desacoplado */
 }
-.color-option:hover { transform: scale(1.1); }
-.color-option:has(input:checked) {
-    outline: 2px solid #333; box-shadow: 0 0 0 3px white, 0 0 0 5px #4169e1;
+
+.color-option:hover { 
+    transform: scale(1.1); 
 }
-/* COLORES */
+
+/* Foco accesible cuando el input oculto (sr-only) recibe foco por teclado */
+input[type="radio"].sr-only:focus-visible + .color-option {
+    outline: 3px solid #000; 
+    outline-offset: 2px;
+}
+
+/* Estado de seleccionado mediante el selector hermano adyacente (+) */
+input[type="radio"].sr-only:checked + .color-option {
+    outline: 2px solid #333; 
+    box-shadow: 0 0 0 3px white, 0 0 0 5px #4169e1;
+}
+
+/* COLORES - Texto de anuncio visual y sonoro */
 .color-seleccionado-texto {
-    font-size: 1.05rem; /* Tamaño cómodo para lectura */
-    color: #222; /* Alto contraste */
+    font-size: 1.05rem;
+    color: #222;
     margin-top: 0;
     margin-bottom: 0.8rem;
     padding: 0.5rem;
-    background-color: #f0f4f8; /* Fondo suave para destacarlo */
+    background-color: #f0f4f8;
     border-radius: 6px;
     border-left: 4px solid #4169e1;
 }
@@ -74,13 +93,14 @@ body {
 .color-seleccionado-texto strong {
     font-weight: 800;
 }
+
 .btn {
     background-color: #4169e1; color: white; border: none; padding: 1rem 1.2rem;
     font-size: 1rem; border-radius: 8px; cursor: pointer; width: 100%; margin-bottom: 0.8rem; font-weight: bold;
 }
 .btn:disabled { background-color: #cccccc; cursor: not-allowed; color: #666666; }
 
-/* El simulador de teléfono restaurado */
+/* El simulador de teléfono */
 .preview {
     display: flex; align-items: center; justify-content: center;
 }
@@ -88,10 +108,10 @@ body {
 .phone-frame {
     width: 300px;
     height: 600px;
-    border: 16px solid #111; /* Borde negro del teléfono */
+    border: 16px solid #111;
     border-radius: 40px;
     position: relative;
-    background: #ffffff; /* Pantalla blanca */
+    background: #ffffff;
     box-shadow: 0 10px 20px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
