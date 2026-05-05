@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de QR Accesible | Servicios | Kyosei Accesibilidad</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="/./img/iconologo.ico">
+
+    <!-- CSS Global de Kyosei -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <meta name="description" content="Crea códigos QR 100% accesibles y gratuitos con la herramienta de Kyosei Accesibilidad. Personaliza el contenido y descarga tu código al instante.">
+    <meta name="keywords" content="generador qr, qr accesible, wcag 2.2, herramientas de accesibilidad, kyosei accesibilidad">
+    <meta name="author" content="Kyosei Accesibilidad">
+
+    <meta property="og:title" content="Generador de QR Accesible | Kyosei">
+    <meta property="og:description" content="Crea y descarga códigos QR accesibles para tus proyectos físicos y digitales.">
+    <meta property="og:type" content="website">
+
+    <meta name="accessibility" content="WCAG 2.2 AAA">
+
+    <!-- Estilos específicos para el Generador QR adaptados a las variables de Kyosei -->
+    <style>
+        .qr-app-layout {
+            display: flex;
+            flex-direction: row;
+            background-color: var(--header-bg);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            gap: 3rem;
+            border-top: 4px solid var(--secondary-color);
+            margin-bottom: 3rem;
+        }
+
+        .formulario { flex: 1; }
+        .formulario h2 { font-size: 1.4rem; margin-top: 0; margin-bottom: 2rem; color: var(--primary-color); border-bottom: 1px solid #ccc; padding-bottom: 0.5rem; }
+
+        .campo { margin-bottom: 1.5rem; }
+        .fieldset-colores { border: none; padding: 0; margin: 0 0 1.5rem 0; }
+        .fieldset-colores legend, .campo label:not(.color-option) {
+            display: block; font-weight: bold; margin-bottom: 0.5rem; color: var(--text-color); font-size: 0.95rem;
+        }
+
+        .campo input[type="text"] {
+            width: 100%; 
+            padding: 0.8rem; 
+            font-size: 1rem; 
+            border: 2px solid var(--primary-color); 
+            border-radius: 6px; 
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 44px; /* WCAG 2.5.8 AAA */
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .colores { display: flex; gap: 12px; margin-top: 0.5rem; }
+
+        .color-option {
+            position: relative; width: 44px; height: 44px; /* Ajustado a AAA target size */
+            border-radius: 50%; cursor: pointer; border: 2px solid var(--bg-color); 
+            box-shadow: 0 0 0 1px var(--text-color); 
+            transition: transform 0.2s ease;
+            display: inline-block;
+        }
+
+        .color-option:hover { transform: scale(1.1); }
+
+        input[type="radio"].sr-only:focus-visible + .color-option {
+            outline: 3px solid var(--focus-outline-color); 
+            outline-offset: 2px;
+        }
+
+        input[type="radio"].sr-only:checked + .color-option {
+            outline: 2px solid var(--text-color); 
+            box-shadow: 0 0 0 3px var(--bg-color), 0 0 0 6px var(--primary-color);
+        }
+
+        .color-seleccionado-texto {
+            font-size: 1.05rem; color: var(--text-color); margin-top: 0; margin-bottom: 0.8rem;
+            padding: 0.75rem; background-color: color-mix(in srgb, var(--primary-color) 8%, var(--bg-color));
+            border-radius: 6px; border-left: 4px solid var(--primary-color);
+        }
+
+        .btn-qr {
+            width: 100%; margin-bottom: 0.8rem;
+        }
+
+        .preview { display: flex; align-items: center; justify-content: center; }
+
+        .phone-frame {
+            width: 300px; height: 600px; border: 16px solid var(--text-color);
+            border-radius: 40px; position: relative; background: var(--bg-color);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1); display: flex; flex-direction: column;
+        }
+
+        .phone-frame::before {
+            content: ""; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 120px; height: 25px; background: var(--text-color);
+            border-bottom-left-radius: 15px; border-bottom-right-radius: 15px;
+        }
+
+        .qr-container {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            flex: 1; padding: 1rem; text-align: center; margin-top: 2rem;
+        }
+
+        .qr-container canvas { margin-bottom: 1.5rem; width: 200px !important; height: 200px !important; }
+        .qr-container p { font-weight: bold; color: var(--text-color); font-size: 1.1rem; }
+
+        /* Responsive interno */
+        @media (max-width: 60em) {
+            .qr-app-layout { flex-direction: column; gap: 2rem; padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+<!-- Se usa el Header exacto de servicios.html -->
+<header class="main-header" id="header-root">
+    <div class="header-container">
+        <a href="/./index.html" class="logo-link">
+            <img src="/./img/logo-kyosei-con-fondo-circular.png" alt="Logotipo Kyosei Accesibilidad" class="logo-img" height="60">
+            <span class="company-name">Kyosei Accesibilidad</span>
+        </a>
+
+        <nav id="main-menu" class="main-nav" aria-label="Menú principal de navegación">
+            <ul class="nav-list">
+                <li><a href="/./index.html" class="nav-link">Inicio</a></li>
+                <li><a href="/./pages/nosotros.html" class="nav-link">Nosotros</a></li>
+                <li><a href="/./pages/recursos.html" class="nav-link">Recursos</a></li> 
+                <li><a href="/./pages/cursosytalleres.html" class="nav-link">Cursos y Talleres</a></li>
+                <!-- Mantenemos Servicios como 'current' porque esta es una sub-página de servicios -->
+                <li><a href="/./pages/servicios.html" class="nav-link current" aria-current="page">Servicios</a></li>
+                <li><a href="/./pages/actividades.html" class="nav-link">Actividades</a></li>
+                <li><a href="/./pages/contacto.html" class="nav-link">Contacto</a></li>
+            </ul>
+        </nav>
+
+        <div class="accessibility-wrapper">
+            <button id="acc-menu-toggle" class="btn-tools" aria-controls="acc-panel" aria-expanded="false" aria-haspopup="dialog">
+                <img src="/./img/accesibilidad-universal.svg" alt="" class="icon-img" aria-hidden="true" width="24" height="24">
+                <span class="visible-text">Herramientas Accesibilidad</span>
+            </button>
+            
+            <div id="acc-panel" class="acc-panel" role="dialog" aria-labelledby="acc-title" hidden>
+                <h2 id="acc-title" class="sr-only">Panel de preferencias de accesibilidad</h2>
+                <button type="button" id="accCloseBtn" class="acc-close-btn" aria-label="Cerrar panel de accesibilidad">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                
+                <div class="acc-control-group">
+                    <span class="acc-label" id="theme-label">Tema Visual</span>
+                        <button type="button" id="dark-mode-toggle" class="acc-btn-full" aria-pressed="false">
+                             Activar Modo Oscuro
+                         </button>
+                </div>
+
+                <fieldset class="acc-control-group">
+                <legend class="acc-label">Tamaño de texto</legend>
+                <div class="acc-btn-row">
+                    <button type="button" id="btn-fs-decrease" aria-describedby="desc-fs-decrease">A-</button>
+                    <span id="desc-fs-decrease" class="sr-only">Reducir tamaño de texto</span>
+                    <button type="button" id="btn-fs-reset" aria-describedby="desc-fs-reset">A</button>
+                    <span id="desc-fs-reset" class="sr-only">Restablecer tamaño de texto</span>
+                    <button type="button" id="btn-fs-increase" aria-describedby="desc-fs-increase">A+</button>
+                    <span id="desc-fs-increase" class="sr-only">Aumentar tamaño de texto</span>
+                </div>
+            </fieldset>
+                <fieldset class="acc-control-group">
+                    <legend class="acc-label">Interlineado</legend>
+                    <div class="acc-btn-row">
+                        <button type="button" id="btn-lh-decrease" aria-describedby="desc-lh-decrease">↔-</button>
+                        <span id="desc-lh-decrease" class="sr-only">Reducir interlineado</span>
+                        <button type="button" id="btn-lh-reset" aria-describedby="desc-lh-reset">↔</button>
+                        <span id="desc-lh-reset" class="sr-only">Restablecer interlineado</span>
+                        <button type="button" id="btn-lh-increase" aria-describedby="desc-lh-increase">↔+</button>
+                        <span id="desc-lh-increase" class="sr-only">Aumentar interlineado</span>
+                    </div>
+                </fieldset>
+
+                <fieldset class="acc-control-group">
+                    <legend class="acc-label">Espaciado de letras</legend>
+                    <div class="acc-btn-row">
+                        <button type="button" id="btn-ls-decrease" aria-describedby="desc-ls-decrease">T-</button>
+                        <span id="desc-ls-decrease" class="sr-only">Reducir espaciado de letras</span>
+                        <button type="button" id="btn-ls-reset" aria-describedby="desc-ls-reset">T</button>
+                        <span id="desc-ls-reset" class="sr-only">Restablecer espaciado de letras</span>
+                        <button type="button" id="btn-ls-increase" aria-describedby="desc-ls-increase">T+</button>
+                        <span id="desc-ls-increase" class="sr-only">Aumentar espaciado de letras</span>
+                    </div>
+                </fieldset>
+               
+                <div class="acc-control-group">
+                    <span class="acc-label" id="ruler-label">Ayudas de lectura</span>
+                    <button type="button" id="toggle-ruler" class="acc-btn-full" aria-pressed="false">
+                        Activar Regla de Lectura
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <button type="button" id="mobile-menu-toggle" class="icon-button mobile-menu-toggle" aria-controls="main-menu" aria-expanded="false" aria-label="Abrir menú de navegación">
+            <img src="/img/menu_burger.svg" alt="" class="burger-icon" aria-hidden="true" width="32" height="32">
+        </button>
+    </div>
+</header>    
+
+<main id="main-content" tabindex="-1">
+    
+    <!-- Hero Section adaptado para la herramienta -->
+    <section class="hero-section" aria-labelledby="titulo-qr">
+        <div class="hero-content-container">
+            <div class="hero-text-content">
+                <h1 id="titulo-qr">Generador de Códigos QR</h1>
+                <p class="hero-lead">
+                    Una herramienta gratuita y 100% accesible desarrollada por Kyosei.
+                </p>
+                <p class="hero-description">
+                    Crea y personaliza códigos QR para compartir enlaces, documentos y recursos físicos sin barreras digitales. Configura tu código fácilmente, previsualízalo en tiempo real y descárgalo listo para usar.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contenedor Principal de la Aplicación QR -->
+    <section class="resource-section">
+        <div class="qr-app-layout">
+            <section class="formulario" aria-labelledby="titulo-formulario">
+              <h2 id="titulo-formulario">Configura tu contenido</h2>
+      
+            <div class="campo">
+                <label for="texto">Contenido del QR (URL o Número de WhatsApp)</label>
+                <input type="text" id="texto" placeholder="Ej: https://web.com o 5491122334455" required aria-required="true" aria-describedby="ayuda-wa" />
+                <small id="ayuda-wa" style="display: block; margin-top: 5px; font-size: 0.85rem; color: var(--text-color);">
+                Para WhatsApp, ingresa el código de país seguido del número (sin espacios ni el signo +).
+                </small>
+            </div>
+      
+              <div class="campo">
+                <label for="texto">Texto Simple o URL destino</label>
+                <input type="text" id="texto" placeholder="Ejemplo: https://kyoseiaccesibilidad.com" required aria-required="true" />
+              </div>
+      
+              <fieldset class="campo fieldset-colores">
+                <legend id="legend-color">Color del Código QR</legend>
+      
+                <p id="color-anuncio" aria-live="polite" class="color-seleccionado-texto">
+                  Color seleccionado: <strong>Negro clásico</strong>
+                </p>
+      
+                <div class="colores" role="radiogroup" aria-labelledby="legend-color">
+                  <!-- Opción Negro -->
+                  <input type="radio" id="color-negro" name="color" value="#000000" class="sr-only" data-nombre-color="Negro clásico" checked />
+                  <label for="color-negro" class="color-option" style="background-color: #000000" title="Negro clásico">
+                    <span class="sr-only">Negro clásico</span>
+                  </label>
+      
+                  <!-- Opción Azul Kyosei -->
+                  <input type="radio" id="color-azul" name="color" value="#155BA6" class="sr-only" data-nombre-color="Azul Kyosei" />
+                  <label for="color-azul" class="color-option" style="background-color: #155BA6" title="Azul Kyosei">
+                    <span class="sr-only">Azul Kyosei</span>
+                  </label>
+      
+                  <!-- Opción Naranja Kyosei -->
+                  <input type="radio" id="color-naranja" name="color" value="#B35812" class="sr-only" data-nombre-color="Naranja Kyosei" />
+                  <label for="color-naranja" class="color-option" style="background-color: #B35812" title="Naranja Kyosei">
+                    <span class="sr-only">Naranja Kyosei</span>
+                  </label>
+      
+                  <!-- Opción Verde -->
+                  <input type="radio" id="color-verde" name="color" value="#2e7d32" class="sr-only" data-nombre-color="Verde oscuro" />
+                  <label for="color-verde" class="color-option" style="background-color: #2e7d32" title="Verde oscuro">
+                    <span class="sr-only">Verde oscuro</span>
+                  </label>
+                </div>
+              </fieldset>
+      
+              <button class="btn-primary btn-qr" id="btn-generar" disabled aria-disabled="true">
+                Generar Código QR
+              </button>
+              <button class="btn-secondary btn-qr" id="btn-descargar" disabled aria-disabled="true">
+                Descargar QR en PNG
+              </button>
+              <button class="btn-secondary btn-qr" id="btn-reiniciar" style="border-color: transparent;">
+                Limpiar formulario
+              </button>
+            </section>
+      
+            <section class="preview" aria-label="Vista previa del código QR generado">
+              <div class="phone-frame">
+                <div class="qr-container" aria-live="polite" id="qr-live-region">
+                  <canvas id="qrcode" role="img" aria-label="Área de vista previa del Código QR"></canvas>
+                  <p id="mensaje-estado">Escanéame</p>
+                </div>
+              </div>
+            </section>
+          </div>
+    </section>
+</main>
+
+<footer class="main-footer" aria-labelledby="footer-heading">
+<h2 id="footer-heading" class="sr-only">Información del sitio y enlaces útiles</h2>
+
+<div class="footer-container">
+    <div class="footer-section">
+        <h3>Kyosei Accesibilidad</h3>
+        <p>Educamos con Empatía, Diseñamos con amor, Testeamos con Convicción.</p>
+    </div>
+    
+    <div class="footer-section">
+        <h3>Mapa del sitio</h3>
+        <nav aria-label="Mapa del sitio del pie de página">
+            <ul class="footer-links">
+                <li><a href="/./pages/index.html">Inicio</a></li>
+                <li><a href="/./pages/nosotros.html">Nosotros</a></li>
+                <li><a href="/./pages/guias.html">Guías</a></li>
+                <li><a href="/./pages/cursosytalleres.html">Cursos y Talleres</a></li>
+                <li><a href="/./pages/servicios.html">Servicios</a></li>
+                <li><a href="/./pages/actividades.html">Actividades</a></li>
+                <li><a href="/./pages/contacto.html">Contacto</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="footer-section">
+        <h3>Redes Sociales</h3>
+        <nav aria-label="Redes sociales">
+            <ul class="social-links">
+                <li><a href="https://www.linkedin.com/company/kyosei-accesibilidad/posts/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+                <li><a href="https://www.instagram.com/kyoseiaccesibilidad/" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+                <li><a href="https://www.facebook.com/profile.php?id=61578219146874" target="_blank" rel="noopener noreferrer">Facebook</a></li>
+                <li><a href="https://youtube.com/@kyoseiaccesibilidad" target="_blank" rel="noopener noreferrer">YouTube</a></li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<div class="footer-bottom">
+    <p>&copy; 2026 Kyosei Accesibilidad. Todos los derechos reservados.</p>
+</div>
+</footer>
+
+<!-- Scripts Core de Kyosei -->
+<script src="/js/main.js"></script>
+
+<!-- Librería QR -->
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+
+<!-- Lógica del Generador QR (Puede extraerse a un js/qr-app.js) -->
+<script src="/js/qr-app.js"></script>
+</body>
+</html>
